@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chat</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            width: 100%;
+            text-align: center;
+            font-size: 200%;
+        }
+        main {
+            width: 60%;
+            padding: 20px 0;
+            margin: 1vh 20%;
+            border: solid 1px black;
+            border-radius: 5px;
+        }
+        #history {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .message {
+            width: 96%;
+            word-break: break-all;
+            padding: 5px 2%;
+        }
+        .message-rightmost {
+            text-align: right;
+        }
+        textarea {
+            width: 95%;
+            height: 100px;
+            font-size: 130%;
+            margin: 2%;
+            border: solid 1px black;
+            resize: none;
+        }
+        input {
+            font-size: 140%;
+            width: 90%;
+            margin: 20px 0;
+            padding: 0 5%;
+        }
+        button {
+            width: 96%;
+            height: 40px;
+            margin: 0 2%;
+            font-size: 130%;
+            cursor: pointer;
+        }
+        @media screen and (max-width:850px) {
+            main {
+                width: 94%;
+                margin: 1vh 3%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>chat</header>
+    <main>
+        <div id="history">
+            <div class="message">hello, world!</div>
+        </div>
+        <textarea id="send-text" placeholder="Input message here & push Send message button"></textarea>
+        <button id="send-button">Send message</button>
+    </main>
+    <script>
+        // add click event
+        document.getElementById("send-button").addEventListener("click", function() {
+
+            // get message text
+            let textElem = document.getElementById("send-text");
+            let text = textElem.value;
+
+            if (text) {
+
+                // add message text to hisotry
+                let elem = document.createElement("div");
+                elem.className = "message message-rightmost";
+                elem.textContent = text;
+                document.getElementById("history").appendChild(elem);
+
+                // delete message from textarea
+                textElem.value = "";
+
+                // send message to websocket server
+                console.log("send!", text);
+            }
+
+        });
+    </script>
+</body>
+</html>
