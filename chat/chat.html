@@ -67,36 +67,68 @@
 <body>
     <header>chat</header>
     <main>
-        <div id="history">
-            <div class="message">hello, world!</div>
-        </div>
+        <div id="history"></div>
         <textarea id="send-text" placeholder="Input message here & push Send message button"></textarea>
         <button id="send-button">Send message</button>
     </main>
     <script>
+        // initialize websocket
+        let socket = null;
+        try {
+            socket = new WebSocket("ws://" + location.host + "/ws");
+        }
+        catch (e) {
+            let elem = document.createElement("div");
+            elem.style.textAlign = "center";
+            elem.style.fontSize = "130%";
+            elem.textContent = "ERROR: " + e;
+            document.getElementById("history").appendChild(elem);
+        }
+        socket.addEventListener('close', (e) => {
+            let elem = document.createElement("div");
+            elem.style.textAlign = "center";
+            elem.style.fontSize = "130%";
+            elem.textContent = "INFO: Connection clonsed.";
+            document.getElementById("history").appendChild(elem);
+        });
+        socket.addEventListener('error', (e) => {
+            let elem = document.createElement("div");
+            elem.style.textAlign = "center";
+            elem.style.fontSize = "130%";
+            elem.textContent = "ERROR: ";
+            document.getElementById("history").appendChild(elem);
+        });
+        socket.addEventListener('message', (e) => {
+            let message = e.data;
+            if (message) {
+                let elem = document.createElement("div");
+                elem.className = "message";
+                elem.textContent = message;
+                document.getElementById("history").appendChild(elem);
+            }
+        });
+        socket.addEventListener('open', (e) => {
+            let elem = document.createElement("div");
+            elem.style.textAlign = "center";
+            elem.style.fontSize = "130%";
+            elem.textContent = "Welcome!";
+            document.getElementById("history").appendChild(elem);
+        });
+
         // add click event
         document.getElementById("send-button").addEventListener("click", function() {
-
             // get message text
             let textElem = document.getElementById("send-text");
             let text = textElem.value;
-
             if (text) {
-
-                // add message text to hisotry
-                let elem = document.createElement("div");
-                elem.className = "message message-rightmost";
-                elem.textContent = text;
-                document.getElementById("history").appendChild(elem);
-
                 // delete message from textarea
                 textElem.value = "";
-
                 // send message to websocket server
+                socket.send(text);
                 console.log("send!", text);
             }
-
         });
+
     </script>
 </body>
 </html>
